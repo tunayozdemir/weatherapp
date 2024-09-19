@@ -25,7 +25,7 @@ const ApiKeyPrompt: React.FC<ApiKeyPromptProps> = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
           setLocation({ latitude, longitude });
-          setIsFetchingLocation(false); 
+          setIsFetchingLocation(false);
         },
         (error) => {
           message.error(`Konum alınamadı, lütfen izin verin. Detay: ${error.message}`);
@@ -33,7 +33,7 @@ const ApiKeyPrompt: React.FC<ApiKeyPromptProps> = () => {
         }
       );
     } else {
-      setIsFetchingLocation(false); 
+      setIsFetchingLocation(false);
     }
   }, []);
 
@@ -59,6 +59,8 @@ const ApiKeyPrompt: React.FC<ApiKeyPromptProps> = () => {
           // lat: location.latitude,
           // lon: location.longitude,
           appid: apiKey,
+          // units: 'metric',
+          lang: 'tr',
         },
       });
 

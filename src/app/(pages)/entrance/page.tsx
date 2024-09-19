@@ -1,5 +1,5 @@
 import React from 'react'
-import ApiKeyPrompt from '../../components/ApiKeyPrompt/ApiKeyPrompt'
+import ApiKeyPrompt from '../../components/apiKeyPrompt'
 
 const Entrance = () => {
   return (

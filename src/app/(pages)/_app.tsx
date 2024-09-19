@@ -10,7 +10,7 @@ function MyApp({ Component, pageProps }: any) {
 
   useEffect(() => {
     if (!apiKey) {
-      router.push('/dashboard');
+      router.push('/');
     }
   }, [apiKey, router]);
 
