@@ -40,3 +40,21 @@ export interface WeatherData {
   name: string;
   cod: number;
 }
+
+export interface DailyWeather {
+  dt: number;
+  temp: {
+    day: number;
+    min: number;
+    max: number;
+  };
+  weather: {
+    main: string;
+    description: string;
+    icon: string;
+  }[];
+}
+
+export interface WeatherData {
+  daily: DailyWeather[];
+}

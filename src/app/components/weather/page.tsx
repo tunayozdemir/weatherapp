@@ -11,13 +11,15 @@ interface WeatherProps {
 
 const Weather: React.FC<WeatherProps> = ({ data }) => {
 
-  // console.log('data :', data)
+  console.log('data :', data)
   const fahrenheitToCelsius = (fahrenheit: number) => (fahrenheit - 32) * 5/9;
   const tempInCelsius = fahrenheitToCelsius(data.main.temp);
   const weatherDescription = weatherTranslations[data.weather[0].main] || data.weather[0].main;
 
+  console.log('weatherDescription :', weatherDescription)
+
   return (
-    <div className='relative flex flex-col justify-between max-w-[500px] w-full m-auto p-4 text-green-300 z-10'>
+    <div className='relative flex flex-col justify-between max-w-[500px] w-full h-[900vh] m-auto p-4 text-green-300 z-10'>
       <div>
         <div>
           <Image
@@ -29,7 +31,6 @@ const Weather: React.FC<WeatherProps> = ({ data }) => {
           <p>{weatherDescription}</p>
         </div>
         <p>{tempInCelsius.toFixed(0)}&#176;</p>
-
       </div>
     </div>
   )
