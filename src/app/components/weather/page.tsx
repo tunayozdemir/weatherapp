@@ -19,7 +19,7 @@ const Weather: React.FC<WeatherProps> = ({ data }) => {
   console.log('weatherDescription :', weatherDescription)
 
   return (
-    <div className='relative flex flex-col justify-between max-w-[500px] w-full h-[900vh] m-auto p-4 text-green-300 z-10'>
+    <div className='relative flex flex-col justify-between max-w-[500px] w-full m-auto p-4 text-green-300 z-10'>
       <div>
         <div>
           <Image
