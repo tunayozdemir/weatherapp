@@ -39,14 +39,18 @@ const SelectionBox: React.FC<SelectionBoxProps> = ({ onSelectionChange }) => {
           <Select
             variant="borderless"
             size='large'
-            className='w-full bg-transparent border border-gray-300 text-white rounded-2xl m-auto placeholder:text-white'
+            className='w-full  border border-gray-300 text-white rounded-2xl m-auto z-20'
             onChange={handleCityChange}
             options={cities.map(city => ({
               label: city,
               value: city,
             }))}
+            showSearch
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
             placeholder="Şehir Seçin"
-            value={selectedCity}
+            value={selectedCity ? selectedCity : undefined}
           />
         </div>
       </div>
@@ -62,6 +66,10 @@ const SelectionBox: React.FC<SelectionBoxProps> = ({ onSelectionChange }) => {
               label: district,
               value: district,
             }))}
+            showSearch
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
             placeholder="İlçe Seçin"
             value={selectedDistrict}
           />

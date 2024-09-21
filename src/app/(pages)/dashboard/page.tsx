@@ -1,12 +1,24 @@
 'use client'
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-// import { BsSearch } from 'react-icons/bs';
-import { Weater, SelectBox } from '../../components';
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
+import { Weater, SelectBox } from '../../components'
+import { Tabs } from 'antd'
+import axios from 'axios'
+import Image from 'next/image'
+import L from 'leaflet'
 
-const img = 'https://images.unsplash.com/photo-1561470508-fd4df1ed90b2?q=80&w=2076&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+import Bulutlu from '../../assets/image/bulutlu.jpg'
+
+const defaultIcon = L.icon({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconSize: [25, 41], // iconun boyutu
+  iconAnchor: [12, 41], // iconun haritaya sabitlendiği nokta
+  popupAnchor: [1, -34], // popup'ın konumlandırılacağı nokta
+  shadowSize: [41, 41], // gölgenin boyutu
+});
 
 const Dashboard: React.FC = () => {
   const router = useRouter();
@@ -47,31 +59,24 @@ const Dashboard: React.FC = () => {
   if (loading) {
     return (
       <div>Loading...</div>
-    )
+    );
   }
   if (error) {
-    return (
-      <div>{error}</div>
-    )
+    return <div>{error}</div>;
   }
 
   const handleChangeLocation = (value: { city: string; district?: string }) => {
-    console.log('handleChangeLocation :', value);
-
     if (apiKey) {
       const fetchData = async () => {
         try {
-          // Construct the query based on whether a district is provided
-          const query = value.district
-            ? `${value.district},${value.city}`
-            : value.city;
+          const query = value.district ? `${value.district},${value.city}` : value.city;
 
           const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
             params: {
               q: query,
               appid: apiKey,
               units: 'imperial',
-              cnt: 7
+              cnt: 7,
             },
           });
 
@@ -87,20 +92,84 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const handleMapClick = (e: any) => {
+    const { lat, lng } = e.latlng;
+
+    if (apiKey) {
+      const fetchWeatherByCoordinates = async () => {
+        try {
+          const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+            params: {
+              lat,
+              lon: lng,
+              appid: apiKey,
+              units: 'imperial',
+            },
+          });
+
+          setApiData(response.data);
+        } catch (err) {
+          setError('Veri alınamadı.');
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchWeatherByCoordinates();
+    }
+  };
+
+  const MapClickHandler = () => {
+    useMapEvents({
+      click: handleMapClick,
+    });
+    return null;
+  };
 
 
   return (
-    <div>
-      <div className='absolute top-0 left-0 right-0 bottom-0 bg-black/40 z-[1]' />
-      <Image src={img} layout='fill' alt='img' />
-      <div className='relative block justify-between items-center max-w-[500px] w-full m-auto pt-4 text-white z-10'>
-
-        <SelectBox onSelectionChange={handleChangeLocation} />
-        {apiData?.main && <Weater data={apiData} />}
+    <div className="relative w-screen h-screen overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 bottom-0 bg-black/40 z-[1]" />
+      <Image src={Bulutlu} layout="fill" alt="img" className="object-cover" />
+      <div className="relative flex flex-col justify-between items-center w-full m-auto pt-4 text-white z-10">
+        <div className="p-4">
+          <Tabs
+            // tabPosition={'left'}
+            defaultActiveKey="2"
+            type="card"
+            className="active:bg-transparent"
+            items={[
+              {
+                label: 'Manüel Seçim',
+                key: '1',
+                children: (
+                  <div className="p-6 text-white rounded-lg w-screen max-w-[900px] active:bg-transparent">
+                    <SelectBox onSelectionChange={handleChangeLocation} />
+                    {apiData?.main && <Weater data={apiData} />}
+                  </div>
+                ),
+              },
+              {
+                label: 'Harita Seçim',
+                key: '2',
+                children: (
+                  <div className="p-6 text-white rounded-lg w-screen max-w-[900px] ">
+                    <MapContainer center={[39.9334, 32.8597]} zoom={6} style={{ height: '400px', width: '100%' }} className='rounded-md'>
+                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                      <MapClickHandler />
+                      {location && (
+                        <Marker position={[location.latitude, location.longitude]} icon={defaultIcon} />
+                      )}
+                    </MapContainer>
+                    {apiData?.main && <Weater data={apiData} />}
+                  </div>
+                ),
+              },
+            ]}
+          />
+        </div>
       </div>
-    </div >
-
-  )
-}
+    </div>
+  );
+};
 
 export default Dashboard;

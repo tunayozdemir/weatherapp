@@ -1,0 +1,72 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[29.0, 41.0], [29.0, 42.0], [30.0, 42.0], [30.0, 41.0], [29.0, 41.0]]
+        ]
+      },
+      "properties": {
+        "name": "İstanbul",
+        "type": "il"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[32.0, 39.0], [32.0, 40.0], [33.0, 40.0], [33.0, 39.0], [32.0, 39.0]]
+        ]
+      },
+      "properties": {
+        "name": "Ankara",
+        "type": "il"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[27.0, 38.0], [27.0, 39.0], [28.0, 39.0], [28.0, 38.0], [27.0, 38.0]]
+        ]
+      },
+      "properties": {
+        "name": "İzmir",
+        "type": "il"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[29.5, 41.5], [29.5, 42.0], [30.0, 42.0], [30.0, 41.5], [29.5, 41.5]]
+        ]
+      },
+      "properties": {
+        "name": "Kadıköy",
+        "type": "ilçe",
+        "parent": "İstanbul"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[32.5, 39.5], [32.5, 40.0], [33.0, 40.0], [33.0, 39.5], [32.5, 39.5]]
+        ]
+      },
+      "properties": {
+        "name": "Çankaya",
+        "type": "ilçe",
+        "parent": "Ankara"
+      }
+    }
+  ]
+}
