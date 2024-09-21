@@ -2,11 +2,12 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
-import { Weater, SelectBox, Background } from '../../components'
-import { Tabs, Button } from 'antd'
+import { Weater, SelectBox, Background, Loading } from '../../components'
+import { Tabs, Button, notification } from 'antd'
 import axios from 'axios'
 import DefaultIcon from '../../utils/mapIcon'
-import { Clear, Clouds, Rain, Drizzle, Thunderstorm, Snow ,Mist} from '@/app/assets/image'
+import { Clear, Clouds, Rain, Drizzle, Thunderstorm, Snow, Mist } from '@/app/assets/image'
+import ErrorBoundary from './error'
 
 type PositionType = 'left' | 'top';
 
@@ -38,8 +39,11 @@ const Dashboard: React.FC = () => {
           });
 
           setApiData(response.data);
-        } catch (err) {
-          setError('Veri alınamadı.');
+        } catch (err: any) {
+          notification.error({
+            message: 'Hata',
+            description: `Veri alınamadı! Detail: ${err.message}`,
+          });
         } finally {
           setLoading(false);
         }
@@ -64,8 +68,11 @@ const Dashboard: React.FC = () => {
           });
 
           setApiData(response.data);
-        } catch (err) {
-          setError('Veri alınamadı.');
+        } catch (err: any) {
+          notification.error({
+            message: 'Hata',
+            description: `Veri alınamadı! Detail: ${err.message}`,
+          });
         } finally {
           setLoading(false);
         }
@@ -136,6 +143,12 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const storedApiKey = sessionStorage.getItem('apiKey');
+    notification.config({
+      placement: 'topRight',
+      bottom: 50,
+      duration: 5,
+    });
+
 
     if (!storedApiKey) {
       router.push('/dashboard');
@@ -151,6 +164,10 @@ const Dashboard: React.FC = () => {
           setLocation({ latitude, longitude });
         },
         (error) => {
+          notification.error({
+            message: 'Hata',
+            description: `Veri alınamadı! Detail: ${error.message}`,
+          });
           setError(`Konum alınamadı, lütfen izin verin. Detail: ${error.message}`);
           setLoading(false);
         }
@@ -191,7 +208,6 @@ const Dashboard: React.FC = () => {
     }
   }, [router, apiData])
 
-
   const handleTabChange = () => {
     setApiData(null);
     setLoading(false);
@@ -203,34 +219,36 @@ const Dashboard: React.FC = () => {
   }
 
   if (loading) {
-    return (
-      <div>Loading...</div>
-    );
+    return <Loading />
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <ErrorBoundary message={error} />
   }
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden">
-      {backgroundImage && <Background src={backgroundImage} />}
-      <div className="relative flex flex-col max-w-[900px] items-center w-full m-auto pt-4 text-white z-10 min-h-screen">
-        <div className="p-4">
-          <Tabs
-            tabPosition={position}
-            tabBarExtraContent={{ left: slot }}
-            defaultActiveKey="1"
-            // type="card"
-            className="active:bg-transparent text-white"
-            items={tabItems}
-            onChange={handleTabChange}
-          />
+    <>
+      {
+        !loading &&
+        <div className="relative w-screen h-screen overflow-hidden">
+          {backgroundImage && <Background src={backgroundImage} loading={loading}/>}
+          <div className="relative flex flex-col max-w-[900px] items-center w-full m-auto pt-4 text-white z-10 min-h-screen">
+            <div className="p-4">
+              <Tabs
+                tabPosition={position}
+                tabBarExtraContent={{ left: slot }}
+                defaultActiveKey="1"
+                className="active:bg-transparent text-white"
+                items={tabItems}
+                onChange={handleTabChange}
+              />
+            </div>
+            {apiData?.main && <Weater data={apiData} />}
+          </div>
         </div>
-        {apiData?.main && <Weater data={apiData} />}
-      </div>
-    </div>
-  );
-};
+      }
+    </>
+  )
+}
 
 export default Dashboard;
