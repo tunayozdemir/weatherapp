@@ -6,8 +6,7 @@ import { Weater, SelectBox, Background } from '../../components'
 import { Tabs, Button } from 'antd'
 import axios from 'axios'
 import DefaultIcon from '../../utils/mapIcon'
-
-import Bulutlu from '../../assets/image/bulutlu.jpg'
+import { Clear, Clouds, Rain, Drizzle, Thunderstorm, Snow ,Mist} from '@/app/assets/image'
 
 type PositionType = 'left' | 'top';
 
@@ -21,6 +20,7 @@ const Dashboard: React.FC = () => {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null)
   const [position, setPosition] = useState<PositionType>('top')
   const [selectionReset, setSelectionsReset] = useState<boolean>(false)
+  const [backgroundImage, setBackgroundImage] = useState<string | any>()
 
   const handleChangeLocation = (value: { city: string; district?: string }) => {
     if (apiKey) {
@@ -159,7 +159,38 @@ const Dashboard: React.FC = () => {
       setError('Geolocation is not supported by this browser.');
       setLoading(false);
     }
-  }, [router])
+
+    if (apiData) {
+      const weatherCondition = apiData.weather[0].main;
+      switch (weatherCondition) {
+        case 'Clear':
+          setBackgroundImage(Clear)
+          break;
+        case 'Clouds':
+          setBackgroundImage(Clouds)
+          break;
+        case 'Rain':
+          setBackgroundImage(Rain)
+          break;
+        case 'Drizzle':
+          setBackgroundImage(Drizzle)
+          break;
+        case 'Thunderstorm':
+          setBackgroundImage(Thunderstorm)
+          break;
+        case 'Snow':
+          setBackgroundImage(Snow)
+          break;
+        case 'Mist':
+          setBackgroundImage(Mist)
+          break;
+
+        default:
+          setBackgroundImage(null)
+      }
+    }
+  }, [router, apiData])
+
 
   const handleTabChange = () => {
     setApiData(null);
@@ -183,7 +214,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      <Background src={Bulutlu} />
+      {backgroundImage && <Background src={backgroundImage} />}
       <div className="relative flex flex-col max-w-[900px] items-center w-full m-auto pt-4 text-white z-10 min-h-screen">
         <div className="p-4">
           <Tabs

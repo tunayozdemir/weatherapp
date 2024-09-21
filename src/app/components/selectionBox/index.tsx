@@ -49,7 +49,7 @@ const SelectionBox: React.FC<SelectionBoxProps> = ({ onSelectionChange, resetSel
           <Select
             variant="borderless"
             size='large'
-            className='w-full  border border-gray-300 text-white rounded-2xl m-auto z-20'
+            className='w-full border border-gray-300 text-white rounded-2xl m-auto z-20'
             onChange={handleCityChange}
             options={cities.map(city => ({
               label: city,
@@ -61,6 +61,8 @@ const SelectionBox: React.FC<SelectionBoxProps> = ({ onSelectionChange, resetSel
             }
             placeholder="Şehir Seçin"
             value={selectedCity ? selectedCity : undefined}
+            style={{ color: 'white' }} 
+            dropdownStyle={{ color: 'black' }} 
           />
         </div>
       </div>

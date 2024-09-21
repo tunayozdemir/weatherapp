@@ -15,12 +15,21 @@
 }
 
 body {
-  .ant-select-selection-item  {
+  background: linear-gradient(135deg, #2c3e50, #4ca1af);
+  opacity: 3;
+  .ant-select-selection-item {
     @apply text-white;
   }
-  .ant-tabs-tab-btn{
+  .ant-tabs-tab-btn {
     @apply text-white;
   }
-
+  .ant-select-selection-placeholder {
+    @apply text-white !important;
+  }
+  .ant-select-arrow {
+    @apply text-white !important;
+  }
+  .ant-select-selection-search-input {
+    @apply text-white !important;
+  }
 }
-
