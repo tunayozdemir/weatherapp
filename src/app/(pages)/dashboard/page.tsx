@@ -9,13 +9,13 @@ import DefaultIcon from '../../utils/mapIcon'
 import { Clear, Clouds, Rain, Drizzle, Thunderstorm, Snow, Mist } from '@/app/assets/image'
 import ErrorBoundary from './error'
 
-type PositionType = 'left' | 'top';
+type PositionType = 'left' | 'top'
 
 const Dashboard: React.FC = () => {
 
   const router = useRouter();
-  const [apiData, setApiData] = useState<any>(null);
-  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [apiData, setApiData] = useState<any>(null)
+  const [apiKey, setApiKey] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null);
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null)
@@ -27,7 +27,7 @@ const Dashboard: React.FC = () => {
     if (apiKey) {
       const fetchData = async () => {
         try {
-          const query = value.district ? `${value.district},${value.city}` : value.city;
+          const query = value.district ? `${value.district},${value.city}` : value.city
 
           const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
             params: {
@@ -139,7 +139,7 @@ const Dashboard: React.FC = () => {
         {OperationsSlot[position]}
       </div>
     );
-  }, [position]);
+  }, [position])
 
   useEffect(() => {
     const storedApiKey = sessionStorage.getItem('apiKey');
@@ -147,7 +147,7 @@ const Dashboard: React.FC = () => {
       placement: 'topRight',
       bottom: 50,
       duration: 5,
-    });
+    })
 
 
     if (!storedApiKey) {
