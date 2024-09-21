@@ -142,13 +142,15 @@ const Dashboard: React.FC = () => {
   }, [position])
 
   useEffect(() => {
+    
+    document.title = "Weather | Dashboard"
+
     const storedApiKey = sessionStorage.getItem('apiKey');
     notification.config({
       placement: 'topRight',
       bottom: 50,
       duration: 5,
     })
-
 
     if (!storedApiKey) {
       router.push('/dashboard');
@@ -231,7 +233,7 @@ const Dashboard: React.FC = () => {
       {
         !loading &&
         <div className="relative w-screen h-screen overflow-hidden">
-          {backgroundImage && <Background src={backgroundImage} loading={loading}/>}
+          {backgroundImage && <Background src={backgroundImage} loading={loading} />}
           <div className="relative flex flex-col max-w-[900px] items-center w-full m-auto pt-4 text-white z-10 min-h-screen">
             <div className="p-4">
               <Tabs
