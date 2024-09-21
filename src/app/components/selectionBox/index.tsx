@@ -6,11 +6,12 @@ import { LocationData } from '../../types/location';
 // `SelectionBox` bileşeni için props türü
 interface SelectionBoxProps {
   onSelectionChange: (selection: { city: string; district: string | undefined }) => void;
+  resetSelection: boolean | null
 }
 
 const locations: LocationData = turkeyLocations;
 
-const SelectionBox: React.FC<SelectionBoxProps> = ({ onSelectionChange }) => {
+const SelectionBox: React.FC<SelectionBoxProps> = ({ onSelectionChange, resetSelection }) => {
   const [cities, setCities] = useState<string[]>([]);
   const [districts, setDistricts] = useState<string[]>([]);
   const [selectedCity, setSelectedCity] = useState<string>('');
@@ -31,6 +32,15 @@ const SelectionBox: React.FC<SelectionBoxProps> = ({ onSelectionChange }) => {
     setSelectedDistrict(value);
     onSelectionChange({ city: selectedCity, district: value }); // Seçimi dışarıya gönder
   };
+
+  useEffect(() => {
+
+    if(resetSelection === true){
+      setSelectedCity('');
+      setSelectedDistrict(undefined);
+      setDistricts([]);
+    }
+  }, [resetSelection]);
 
   return (
     <div className='relative block justify-between items-center max-w-[500px] w-full m-auto pt-4 text-white z-10'>

@@ -18,5 +18,9 @@ body {
   .ant-select-selection-item  {
     @apply text-white;
   }
+  .ant-tabs-tab-btn{
+    @apply text-white;
+  }
+
 }
 

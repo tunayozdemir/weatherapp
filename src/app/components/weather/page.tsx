@@ -27,8 +27,8 @@ const Weather: React.FC<WeatherProps> = ({ data }) => {
 
   return (
     <>
-      <div className='relative flex flex-col justify-between max-w-[500px] w-full m-auto p-4 text-green-300 z-10'>
-        <div className='relative flex justify-between pt-12'>
+      <div className='relative  flex-col justify-between w-full max-w-[500px]  m-aut  text-green-300 z-10'>
+        <div className='relative flex justify-between items-center'>
           <div className='flex flex-col items-center'>
             <Image
               src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`}
@@ -41,7 +41,7 @@ const Weather: React.FC<WeatherProps> = ({ data }) => {
           <p className='text-9xl mb-0'>{tempInCelsius.toFixed(0)}&#176;</p>
         </div>
       </div>
-      <div className='relative bg-black/40 p-8 rounded-md w-full max-w-[900px]'>
+      <div className=' bg-black/40 p-8 rounded-md w-full fixed bottom-0'>
         <p className='text-2xl text-center pb-6'>{data.name} Hava Durumu</p>
         <div className='flex justify-between text-center'>
           <div>
