@@ -1,24 +1,156 @@
 'use client'
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-// import { BsSearch } from 'react-icons/bs';
-import { Weater, SelectBox } from '../../components';
+import React, { useEffect, useState, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
+import { Weater, SelectBox, Background, Loading } from '../../components'
+import { Tabs, Button, notification } from 'antd'
+import axios from 'axios'
+import DefaultIcon from '../../utils/mapIcon'
+import { Clear, Clouds, Rain, Drizzle, Thunderstorm, Snow, Mist } from '@/app/assets/image'
+import ErrorBoundary from './error'
 
-const img = 'https://images.unsplash.com/photo-1561470508-fd4df1ed90b2?q=80&w=2076&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+type PositionType = 'left' | 'top'
 
 const Dashboard: React.FC = () => {
-  const router = useRouter();
-  const [apiData, setApiData] = useState<any>(null);
-  const [apiKey, setApiKey] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
+  const router = useRouter();
+  const [apiData, setApiData] = useState<any>(null)
+  const [apiKey, setApiKey] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null);
+  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null)
+  const [position, setPosition] = useState<PositionType>('top')
+  const [selectionReset, setSelectionsReset] = useState<boolean>(false)
+  const [backgroundImage, setBackgroundImage] = useState<string | any>()
+
+  const handleChangeLocation = (value: { city: string; district?: string }) => {
+    if (apiKey) {
+      const fetchData = async () => {
+        try {
+          const query = value.district ? `${value.district},${value.city}` : value.city
+
+          const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+            params: {
+              q: query,
+              appid: apiKey,
+              units: 'imperial',
+              cnt: 7,
+            },
+          });
+
+          setApiData(response.data);
+        } catch (err: any) {
+          notification.error({
+            message: 'Hata',
+            description: `Veri alınamadı! Detail: ${err.message}`,
+          });
+        } finally {
+          setLoading(false);
+        }
+      }
+      fetchData()
+    }
+  }
+
+  const handleMapClick = (e: any) => {
+    const { lat, lng } = e.latlng;
+
+    if (apiKey) {
+      const fetchWeatherByCoordinates = async () => {
+        try {
+          const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+            params: {
+              lat,
+              lon: lng,
+              appid: apiKey,
+              units: 'imperial',
+            },
+          });
+
+          setApiData(response.data);
+        } catch (err: any) {
+          notification.error({
+            message: 'Hata',
+            description: `Veri alınamadı! Detail: ${err.message}`,
+          });
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchWeatherByCoordinates();
+    }
+  }
+
+  const MapClickHandler = () => {
+    useMapEvents({
+      click: handleMapClick,
+    });
+    return null;
+  }
+
+  const tabItems = [
+    {
+      label: 'Manüel Seçim',
+      key: '1',
+      children: (
+        <div className="p-6 text-white rounded-lg w-screen max-w-[900px] active:bg-transparent">
+          <SelectBox onSelectionChange={handleChangeLocation} resetSelection={selectionReset} />
+        </div>
+      ),
+    },
+    {
+      label: 'Harita Seçim',
+      key: '2',
+      children: (
+        <div className="p-6 text-white rounded-lg w-screen max-w-[900px] ">
+          <MapContainer center={[39.9334, 32.8597]} zoom={6} style={{ height: '400px', width: '100%' }} className='rounded-md'>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <MapClickHandler />
+            {location && (
+              <Marker position={[location.latitude, location.longitude]} icon={DefaultIcon} />
+            )}
+          </MapContainer>
+
+        </div>
+      ),
+    },
+  ]
+
+  const handlePositionChange = () => {
+    setPosition((prevPosition) => (prevPosition === 'top' ? 'left' : 'top'));
+  }
+
+  const OperationsSlot: Record<PositionType, React.ReactNode> = {
+    left: (
+      <Button ghost onClick={handlePositionChange} className="tabs-extra-demo-button p-5 border-none pl-0 mb-2">
+        Menü Üst
+      </Button>
+    ),
+    top: (
+      <Button ghost onClick={handlePositionChange} className="tabs-extra-demo-button p-5 border-none pl-0 ">
+        Menü Yan
+      </Button>
+    ),
+  }
+
+  const slot = useMemo(() => {
+    return (
+      <div className="flex justify-start mr-2">
+        {OperationsSlot[position]}
+      </div>
+    );
+  }, [position])
 
   useEffect(() => {
+    
+    document.title = "Weather | Dashboard"
+
     const storedApiKey = sessionStorage.getItem('apiKey');
+    notification.config({
+      placement: 'topRight',
+      bottom: 50,
+      duration: 5,
+    })
 
     if (!storedApiKey) {
       router.push('/dashboard');
@@ -34,6 +166,10 @@ const Dashboard: React.FC = () => {
           setLocation({ latitude, longitude });
         },
         (error) => {
+          notification.error({
+            message: 'Hata',
+            description: `Veri alınamadı! Detail: ${error.message}`,
+          });
           setError(`Konum alınamadı, lütfen izin verin. Detail: ${error.message}`);
           setLoading(false);
         }
@@ -42,64 +178,78 @@ const Dashboard: React.FC = () => {
       setError('Geolocation is not supported by this browser.');
       setLoading(false);
     }
-  }, [router]);
+
+    if (apiData) {
+      const weatherCondition = apiData.weather[0].main;
+      switch (weatherCondition) {
+        case 'Clear':
+          setBackgroundImage(Clear)
+          break;
+        case 'Clouds':
+          setBackgroundImage(Clouds)
+          break;
+        case 'Rain':
+          setBackgroundImage(Rain)
+          break;
+        case 'Drizzle':
+          setBackgroundImage(Drizzle)
+          break;
+        case 'Thunderstorm':
+          setBackgroundImage(Thunderstorm)
+          break;
+        case 'Snow':
+          setBackgroundImage(Snow)
+          break;
+        case 'Mist':
+          setBackgroundImage(Mist)
+          break;
+
+        default:
+          setBackgroundImage(null)
+      }
+    }
+  }, [router, apiData])
+
+  const handleTabChange = () => {
+    setApiData(null);
+    setLoading(false);
+    setError(null);
+    setSelectionsReset(true)
+    setTimeout(() => {
+      setSelectionsReset(false)
+    }, 50);
+  }
 
   if (loading) {
-    return (
-      <div>Loading...</div>
-    )
+    return <Loading />
   }
+
   if (error) {
-    return (
-      <div>{error}</div>
-    )
+    return <ErrorBoundary message={error} />
   }
-
-  const handleChangeLocation = (value: { city: string; district?: string }) => {
-    console.log('handleChangeLocation :', value);
-
-    if (apiKey) {
-      const fetchData = async () => {
-        try {
-          // Construct the query based on whether a district is provided
-          const query = value.district
-            ? `${value.district},${value.city}`
-            : value.city;
-
-          const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
-            params: {
-              q: query,
-              appid: apiKey,
-              units: 'imperial',
-              cnt: 7
-            },
-          });
-
-          setApiData(response.data);
-        } catch (err) {
-          setError('Veri alınamadı.');
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchData();
-    }
-  };
-
-
 
   return (
-    <div>
-      <div className='absolute top-0 left-0 right-0 bottom-0 bg-black/40 z-[1]' />
-      <Image src={img} layout='fill' alt='img' />
-      <div className='relative block justify-between items-center max-w-[500px] w-full m-auto pt-4 text-white z-10'>
-
-        <SelectBox onSelectionChange={handleChangeLocation} />
-        {apiData?.main && <Weater data={apiData} />}
-      </div>
-    </div >
-
+    <>
+      {
+        !loading &&
+        <div className="relative w-screen h-screen overflow-hidden">
+          {backgroundImage && <Background src={backgroundImage} loading={loading} />}
+          <div className="relative flex flex-col max-w-[900px] items-center w-full m-auto pt-4 text-white z-10 min-h-screen">
+            <div className="p-4">
+              <Tabs
+                tabPosition={position}
+                tabBarExtraContent={{ left: slot }}
+                defaultActiveKey="1"
+                className="active:bg-transparent text-white"
+                items={tabItems}
+                onChange={handleTabChange}
+              />
+            </div>
+            {apiData?.main && <Weater data={apiData} />}
+          </div>
+        </div>
+      }
+    </>
   )
 }
 

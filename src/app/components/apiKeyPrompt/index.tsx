@@ -1,35 +1,51 @@
-'use client'
-import React, { useState, useEffect } from 'react'
-import useApiKey from '../../hooks/useApiKey'
-import axios from 'axios'
-import { useRouter } from 'next/navigation'
-import { ApiKeyPromptProps } from '../../types/apiKey'
-import { Button, Input, Form, message, Spin } from 'antd'
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import useApiKey from '../../hooks/useApiKey';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import { ApiKeyPromptProps } from '../../types/apiKey';
+import { Button, Input, Form, notification } from 'antd';
+import { Loading } from '../../components';
 
 const ApiKeyPrompt: React.FC<ApiKeyPromptProps> = () => {
-  const router = useRouter()
+  const router = useRouter();
   const { apiKey, setApiKey } = useApiKey();
-  const [form] = Form.useForm()
-  const [loading, setLoading] = useState(false)
-  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null)
-  const [isFetchingLocation, setIsFetchingLocation] = useState(true)
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(true);
 
-  const validateMessages = { required: 'Lütfen API Key giriniz' }
+  const validateMessages = { required: 'Lütfen API Key giriniz' };
 
   useEffect(() => {
+    
+    document.title = "Weather"
+
+    notification.config({
+      placement: 'topRight',
+      bottom: 50,
+      duration: 5,
+    });
+
     if (apiKey) {
-      router.push('/dashboard');
+      router.push('/dashboard')
     }
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          setLocation({ latitude, longitude });
+          setLocation({ latitude, longitude })
           setIsFetchingLocation(false);
         },
         (error) => {
-          message.error(`Konum alınamadı, lütfen izin verin. Detay: ${error.message}`);
           setIsFetchingLocation(false);
+          notification.error({
+            type: 'error',
+            message: 'Hata',
+            description: `Konum alınamadı, lütfen izin verin. Detay: ${error.message}`,
+          });
         }
       );
     } else {
@@ -39,7 +55,7 @@ const ApiKeyPrompt: React.FC<ApiKeyPromptProps> = () => {
 
   const handleSubmit = async (values: { apiKey: string }) => {
     setLoading(true)
-    const { apiKey } = values;
+    const { apiKey } = values
 
     if (!location) {
       form.setFields([
@@ -47,65 +63,76 @@ const ApiKeyPrompt: React.FC<ApiKeyPromptProps> = () => {
           name: 'apiKey',
           errors: ['Konum bilgisi alınamadı. Lütfen konum bilgisine izin veriniz.'],
         },
-      ]);
-      setLoading(false);
-      return;
+      ])
+      notification.error({
+        type: 'error',
+        message: 'Hata',
+        description: `Konum bilgisi alınamadı. Lütfen konum bilgisine izin veriniz.`,
+      });
+      setLoading(false)
+      return
     }
 
     try {
       const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
         params: {
           q: 'Turkey',
-          // lat: location.latitude,
-          // lon: location.longitude,
           appid: apiKey,
-          // units: 'metric',
           lang: 'tr',
         },
       });
 
       if (response.status === 200) {
         sessionStorage.setItem('apiKey', apiKey);
-        setApiKey(apiKey);
-        message.success('API Key başarıyla kaydedildi.');
-        router.push('/dashboard');
+        setApiKey(apiKey)
+        notification.success({
+          message: 'API Key Doğru',
+          description: `API Key başarıyla kaydedildi.`,
+        })
+        router.push('/dashboard')
       }
-      console.log('response :', response);
     } catch (error) {
       form.setFields([
         {
           name: 'apiKey',
           errors: ['Geçersiz API Key. Lütfen doğru API Key girin.'],
         },
-      ]);
+      ])
+      notification.error({
+        message: 'Hata',
+        description: `Geçersiz API Key. Lütfen doğru API Key girin.`,
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   };
 
   if (isFetchingLocation || loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Spin size="large" tip="Yükleniyor..." />
-      </div>
-    );
+    return <Loading />
   }
 
   return (
-    <div className="bg-slate-800 p-4">
-      <Form
-        form={form}
-        onFinish={handleSubmit}
-        layout="inline"
-        validateMessages={validateMessages}
-      >
-        <Form.Item className="w-auto" name="apiKey" rules={[{ required: true }]}>
-          <Input placeholder="API Key" />
-        </Form.Item>
-        <Form.Item className="w-auto">
-          <Button type="primary" htmlType="submit">Tamam</Button>
-        </Form.Item>
-      </Form>
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 transition-all duration-1000">
+      <div className="bg-white bg-opacity-40 p-8 rounded-lg shadow-lg max-w-lg w-full transition-transform transform hover:scale-105">
+        <h1 className="text-3xl text-center text-gray-900 mb-6">API Key Giriniz</h1>
+        <Form form={form} onFinish={handleSubmit} layout="vertical" validateMessages={validateMessages}>
+          <Form.Item name="apiKey" rules={[{ required: true }]}>
+            <Input
+              placeholder="API Key"
+              className="p-4 w-full rounded-md bg-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-400 transition duration-300 ease-in-out"
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="w-full p-3 bg-blue-500 hover:bg-blue-400 text-white rounded-md transition-all duration-300"
+            >
+              Tamam
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
 };
