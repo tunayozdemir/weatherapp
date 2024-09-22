@@ -12,18 +12,20 @@ import { Weater, SelectBox, Background, Loading } from '../../components'
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import { Clear, Clouds, Rain, Drizzle, Thunderstorm, Snow, Mist } from '@/app/assets/image'
+import { WeatherData } from '../../types/weather'
+import { StaticImageData } from 'next/image'
 
 
 const Dashboard: React.FC = () => {
 
   const router = useRouter()
-  const [apiData, setApiData] = useState<any>(null)
+  const [apiData, setApiData] = useState<WeatherData | null>(null);
   const [apiKey, setApiKey] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null)
   const [selectionReset, setSelectionsReset] = useState<boolean>(false)
-  const [backgroundImage, setBackgroundImage] = useState<string | any>()
+  const [backgroundImage, setBackgroundImage] = useState<string | StaticImageData | null>(null);
 
   const handleChangeLocation = (value: { city: string; district?: string }) => {
     if (apiKey) {
@@ -41,10 +43,10 @@ const Dashboard: React.FC = () => {
           })
 
           setApiData(response.data)
-        } catch (err: any) {
+        } catch {
           notification.error({
             message: 'Hata',
-            description: `${configMessages.notification_error_description_data_could_not_retrieved} Detail: ${err.message}`,
+            description: `${configMessages.notification_error_description_data_could_not_retrieved}`,
           })
         } finally {
           setLoading(false)
@@ -54,7 +56,7 @@ const Dashboard: React.FC = () => {
     }
   }
 
-  const handleMapClick = (e: any) => {
+  const handleMapClick = (e: { latlng: { lat: number; lng: number } }) => {
     const { lat, lng } = e.latlng
 
     if (apiKey) {
@@ -70,10 +72,10 @@ const Dashboard: React.FC = () => {
           })
 
           setApiData(response.data)
-        } catch (err: any) {
+        } catch {
           notification.error({
             message: configMessages.notification_error_message,
-            description: `${configMessages.notification_error_description_data_could_not_retrieved} ${<br>Detail: {err.message}</br>} `,
+            description: `${configMessages.notification_error_description_data_could_not_retrieved}`,
           })
         } finally {
           setLoading(false)
@@ -146,12 +148,12 @@ const Dashboard: React.FC = () => {
           const { latitude, longitude } = position.coords
           setLocation({ latitude, longitude })
         },
-        (err) => {
+        () => {
           notification.error({
             message: configMessages.notification_error_message,
-            description: `${configMessages.invalid_Location_Could_Not_Obtained} ${<br>Detail: {err.message}</br>} `,
+            description: `${configMessages.invalid_Location_Could_Not_Obtained} `,
           })
-          setError(`${configMessages.invalid_Location_Could_Not_Obtained} ${<br>Detail: {err.message}</br>} `)
+          setError(`${configMessages.invalid_Location_Could_Not_Obtained}`)
           setLoading(false)
         }
       )

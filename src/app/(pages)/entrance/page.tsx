@@ -54,7 +54,7 @@ const Entrance: React.FC<ApiKeyPromptProps> = () => {
         })
         router.push('/dashboard')
       }
-    } catch (error) {
+    } catch {
       router.push('/')
       notification.error({
         message: configMessages.notification_error_message,
@@ -79,7 +79,7 @@ const Entrance: React.FC<ApiKeyPromptProps> = () => {
         })
       }
     }
-  }, [apiKey, location, isFetching, error])
+  }, [apiKey, location, isFetching, error, router])
 
 
   if (apiKey || isFetching || loading) {
