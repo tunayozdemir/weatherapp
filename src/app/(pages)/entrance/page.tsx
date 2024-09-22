@@ -10,11 +10,10 @@ import { Loading } from '../../components'
 import { useRouter } from 'next/navigation'
 import { configMessages } from '../../utils'
 import { Button, Input } from '@headlessui/react'
-import ApiKeyPromptProps from '../../types/apiKey'
 import { useGeolocation } from '../../hooks/useGeolocation'
 
 
-const Entrance: React.FC<ApiKeyPromptProps> = () => {
+const Entrance: React.FC = () => {
   const router = useRouter()
   const { apiKey, setApiKey } = useApiKey()
   const [loading, setLoading] = useState(false)

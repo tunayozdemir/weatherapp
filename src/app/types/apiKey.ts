@@ -1,4 +1,4 @@
-export default interface ApiKeyContextType {
-  apiKey: string | null;
-  setApiKey: (key: string | null) => void;
+export interface ApiKeyContextType {
+  apiKey: string;
+  setApiKey: (key: string) => void;
 }
