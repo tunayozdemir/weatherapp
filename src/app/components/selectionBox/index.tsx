@@ -3,7 +3,7 @@ import { Select } from 'antd';
 import turkeyLocations from '../../data/turkeyLocations.json';
 import { LocationData } from '../../types/location';
 
-// `SelectionBox` bileşeni için props türü
+
 interface SelectionBoxProps {
   onSelectionChange: (selection: { city: string; district: string | undefined }) => void;
   resetSelection: boolean | null

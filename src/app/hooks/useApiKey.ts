@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react';
-import { ApiKeyContextType } from '../types';
+import { useState, useEffect } from 'react'
+import { ApiKeyContextType } from '../types'
 
 const useApiKey = (): ApiKeyContextType => {
-  const [apiKey, setApiKey] = useState<string | null>(sessionStorage?.getItem('apiKey'));
+  const [apiKey, setApiKey] = useState<string | null>(sessionStorage?.getItem('apiKey'))
 
   useEffect(() => {
-    const storedApiKey = sessionStorage.getItem('apiKey');
+    const storedApiKey = sessionStorage.getItem('apiKey')
     if (storedApiKey) {
-      setApiKey(storedApiKey);
+      setApiKey(storedApiKey)
     }
-  }, []);
+  }, [])
 
-  return { apiKey, setApiKey };
+  return { apiKey, setApiKey }
 };
 
-export default useApiKey;
+export default useApiKey

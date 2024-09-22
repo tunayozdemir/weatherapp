@@ -1,6 +1,10 @@
 const ConfigMessages = {
   text_submit: "Gönder",
   text_confirm: "Tamam",
+  title_weather_felt: "Hissedilen",
+  title_weather_wind: "Rüzgar",
+  title_weather_wind_deg: "Rüzgar Yönü",
+  title_weather: "Hava Durumu",
   valid_ApiKey: "API Key başarıyla kaydedildi.",
   invalid_ApiKey: "Lütfen geçerli bir api key giriniz.",
   invalid_Borowser_Location_Not_Support: "Tarayıcınız konum bilgilerini desteklemiyor.",
@@ -13,6 +17,19 @@ const ConfigMessages = {
   notification_error_message: 'Hata',
   notification_error_description: 'API Key kaydedilemedi.',
   notification_warning: 'warning',
+  op_ms: "m/s",
+  op_percentage: "%",
+  op_degree: "°",
+  op_degree_c: "°C",
+  direction_north: 'Kuzey',
+  direction_northeast: 'Kuzeydoğu',
+  direction_east: 'Doğu',
+  direction_southeast: 'Güneydoğu',
+  direction_south: 'Güney',
+  direction_southwest: 'Güneybatı',
+  direction_west: 'Batı',
+  direction_northwest: 'Kuzeybatı',
+  title_tab_menu: ['Manüel Seçim', 'Harita Seçim']
 }
 
 export default ConfigMessages
