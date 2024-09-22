@@ -8,3 +8,5 @@ export const weatherTranslations: { [key: string]: string } = {
   Snow: 'Kar',
   Mist: 'Sis',
 };
+
+export default weatherTranslations
