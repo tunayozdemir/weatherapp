@@ -130,7 +130,11 @@ const Dashboard: React.FC = () => {
     })
 
     if (!storedApiKey) {
-      router.push('/dashboard')
+      notification.error({
+        message: configMessages.notification_error_message,
+        description: `${configMessages.notification_error_description_data_could_not_retrieved} `,
+      })
+      router.push('/')
       return
     }
 

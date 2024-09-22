@@ -10,7 +10,7 @@ import { Loading } from '../../components'
 import { useRouter } from 'next/navigation'
 import { configMessages } from '../../utils'
 import { Button, Input } from '@headlessui/react'
-import { ApiKeyPromptProps } from '../../types/apiKey'
+import ApiKeyPromptProps from '../../types/apiKey'
 import { useGeolocation } from '../../hooks/useGeolocation'
 
 
@@ -55,6 +55,7 @@ const Entrance: React.FC<ApiKeyPromptProps> = () => {
         router.push('/dashboard')
       }
     } catch (error) {
+      router.push('/')
       notification.error({
         message: configMessages.notification_error_message,
         description: configMessages.invalid_ApiKey,
