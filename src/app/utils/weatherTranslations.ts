@@ -1,5 +1,5 @@
 
- export const weatherTranslations: { [key: string]: string } = {
+export const weatherTranslations: { [key: string]: string } = {
   Clear: 'Açık',
   Clouds: 'Bulutlu',
   Rain: 'Yağmur',

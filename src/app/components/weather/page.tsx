@@ -1,8 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
+import { configMessages } from '../../utils'
 import { WeatherData } from '../../types/weather'
 import { weatherTranslations } from '../../utils/weatherTranslations'
-import { configMessages } from '../../utils'
 
 interface WeatherProps {
   data: WeatherData;
@@ -38,7 +38,7 @@ const Weather: React.FC<WeatherProps> = ({ data }) => {
             />
             <p className='text-2xl'>{weatherDescription}</p>
           </div>
-          <p className='text-9xl mb-0'>{tempInCelsius.toFixed(0)}&#176;</p>
+          <p className='text-9xl mb-0'>{tempInCelsius.toFixed(0)}{configMessages.op_degree}</p>
         </div>
       </div>
       <div className=' bg-black/40 p-8 rounded-md w-full fixed bottom-0'>

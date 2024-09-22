@@ -1,23 +1,24 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import useApiKey from '../../hooks/useApiKey'
 import axios from 'axios'
-import { useRouter } from 'next/navigation'
-import { ApiKeyPromptProps } from '../../types/apiKey'
+import * as Form from '@radix-ui/react-form'
+import useApiKey from '../../hooks/useApiKey'
+import React, { useState, useEffect } from 'react'
+
 import { notification } from 'antd'
 import { Loading } from '../../components'
+import { useRouter } from 'next/navigation'
 import { configMessages } from '../../utils'
-import { useGeolocation } from '../../hooks/useGeolocation'
-import * as Form from '@radix-ui/react-form'
 import { Button, Input } from '@headlessui/react'
+import { ApiKeyPromptProps } from '../../types/apiKey'
+import { useGeolocation } from '../../hooks/useGeolocation'
+
 
 const Entrance: React.FC<ApiKeyPromptProps> = () => {
-  const router = useRouter();
+  const router = useRouter()
   const { apiKey, setApiKey } = useApiKey()
   const [loading, setLoading] = useState(false)
   const { location, isFetching, error } = useGeolocation()
-
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -32,7 +33,7 @@ const Entrance: React.FC<ApiKeyPromptProps> = () => {
         description: configMessages.invalid_Borowser_Location_Not_Support,
       })
       setLoading(false)
-      return;
+      return
     }
 
     try {
@@ -46,7 +47,7 @@ const Entrance: React.FC<ApiKeyPromptProps> = () => {
 
       if (response.status === 200) {
         sessionStorage.setItem('apiKey', apiKey)
-        setApiKey(apiKey);
+        setApiKey(apiKey)
         notification.success({
           message: configMessages.notification_success_message,
           description: configMessages.notification_success_description,
@@ -61,7 +62,7 @@ const Entrance: React.FC<ApiKeyPromptProps> = () => {
     } finally {
       setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
 
@@ -113,7 +114,7 @@ const Entrance: React.FC<ApiKeyPromptProps> = () => {
         </Form.Root>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Entrance;
+export default Entrance

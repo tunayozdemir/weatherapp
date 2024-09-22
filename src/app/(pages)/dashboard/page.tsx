@@ -38,16 +38,16 @@ const Dashboard: React.FC = () => {
               units: 'imperial',
               cnt: 7,
             },
-          });
+          })
 
-          setApiData(response.data);
+          setApiData(response.data)
         } catch (err: any) {
           notification.error({
             message: 'Hata',
             description: `${configMessages.notification_error_description_data_could_not_retrieved} Detail: ${err.message}`,
-          });
+          })
         } finally {
-          setLoading(false);
+          setLoading(false)
         }
       }
       fetchData()
@@ -55,7 +55,7 @@ const Dashboard: React.FC = () => {
   }
 
   const handleMapClick = (e: any) => {
-    const { lat, lng } = e.latlng;
+    const { lat, lng } = e.latlng
 
     if (apiKey) {
       const fetchWeatherByCoordinates = async () => {
@@ -67,27 +67,27 @@ const Dashboard: React.FC = () => {
               appid: apiKey,
               units: 'imperial',
             },
-          });
+          })
 
-          setApiData(response.data);
+          setApiData(response.data)
         } catch (err: any) {
           notification.error({
             message: configMessages.notification_error_message,
-            description: `${configMessages.notification_error_description_data_could_not_retrieved} ${<br>Detail: ${err.message}</br>} `,
-          });
+            description: `${configMessages.notification_error_description_data_could_not_retrieved} ${<br>Detail: {err.message}</br>} `,
+          })
         } finally {
-          setLoading(false);
+          setLoading(false)
         }
-      };
-      fetchWeatherByCoordinates();
+      }
+      fetchWeatherByCoordinates()
     }
   }
 
   const MapClickHandler = () => {
     useMapEvents({
       click: handleMapClick,
-    });
-    return null;
+    })
+    return null
   }
 
   const tabItems = [
@@ -122,7 +122,7 @@ const Dashboard: React.FC = () => {
 
     document.title = "Weather | Dashboard"
 
-    const storedApiKey = sessionStorage.getItem('apiKey');
+    const storedApiKey = sessionStorage.getItem('apiKey')
     notification.config({
       placement: 'topRight',
       bottom: 50,
@@ -130,56 +130,56 @@ const Dashboard: React.FC = () => {
     })
 
     if (!storedApiKey) {
-      router.push('/dashboard');
-      return;
+      router.push('/dashboard')
+      return
     }
 
-    setApiKey(storedApiKey);
+    setApiKey(storedApiKey)
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const { latitude, longitude } = position.coords;
-          setLocation({ latitude, longitude });
+          const { latitude, longitude } = position.coords
+          setLocation({ latitude, longitude })
         },
         (err) => {
           notification.error({
             message: configMessages.notification_error_message,
             description: `${configMessages.invalid_Location_Could_Not_Obtained} ${<br>Detail: {err.message}</br>} `,
-          });
-          setError(`${configMessages.invalid_Location_Could_Not_Obtained} ${<br>Detail: {err.message}</br>} `);
-          setLoading(false);
+          })
+          setError(`${configMessages.invalid_Location_Could_Not_Obtained} ${<br>Detail: {err.message}</br>} `)
+          setLoading(false)
         }
-      );
+      )
     } else {
-      setError(configMessages.invalid_Borowser_Location_Not_Support);
-      setLoading(false);
+      setError(configMessages.invalid_Borowser_Location_Not_Support)
+      setLoading(false)
     }
 
     if (apiData) {
-      const weatherCondition = apiData.weather[0].main;
+      const weatherCondition = apiData.weather[0].main
       switch (weatherCondition) {
         case 'Clear':
           setBackgroundImage(Clear)
-          break;
+          break
         case 'Clouds':
           setBackgroundImage(Clouds)
-          break;
+          break
         case 'Rain':
           setBackgroundImage(Rain)
-          break;
+          break
         case 'Drizzle':
           setBackgroundImage(Drizzle)
-          break;
+          break
         case 'Thunderstorm':
           setBackgroundImage(Thunderstorm)
-          break;
+          break
         case 'Snow':
           setBackgroundImage(Snow)
-          break;
+          break
         case 'Mist':
           setBackgroundImage(Mist)
-          break;
+          break
 
         default:
           setBackgroundImage(null)
@@ -188,9 +188,9 @@ const Dashboard: React.FC = () => {
   }, [router, apiData])
 
   const handleTabChange = () => {
-    setApiData(null);
-    setLoading(false);
-    setError(null);
+    setApiData(null)
+    setLoading(false)
+    setError(null)
     setSelectionsReset(true)
     setBackgroundImage(null)
     setTimeout(() => {
@@ -249,4 +249,4 @@ const Dashboard: React.FC = () => {
   )
 }
 
-export default Dashboard;
+export default Dashboard

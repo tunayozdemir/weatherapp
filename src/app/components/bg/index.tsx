@@ -1,7 +1,6 @@
-import React from 'react'
 import Image from 'next/image'
-import { ImageComponentProps } from '../../types/bg';
 import { Loading } from '../../components'
+import { ImageComponentProps } from '../../types/bg'
 
 const Bg: React.FC<ImageComponentProps> = ({ src, alt, className, loading }) => {
   return (
