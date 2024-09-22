@@ -13,6 +13,7 @@ const ConfigMessages = {
   notification_success: 'success',
   notification_success_message: 'Başarılı',
   notification_success_description: 'API Key başarıyla kaydedildi.',
+  notification_error_description_data_could_not_retrieved:'Veri alınamadı!',
   notification_error: 'error',
   notification_error_message: 'Hata',
   notification_error_description: 'API Key kaydedilemedi.',

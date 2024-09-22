@@ -51,7 +51,7 @@ const Entrance: React.FC<ApiKeyPromptProps> = () => {
           message: configMessages.notification_success_message,
           description: configMessages.notification_success_description,
         })
-        router.push('/dashboard2')
+        router.push('/dashboard')
       }
     } catch (error) {
       notification.error({
@@ -65,7 +65,7 @@ const Entrance: React.FC<ApiKeyPromptProps> = () => {
 
   useEffect(() => {
 
-    if (apiKey) { router.push('/dashboard2') }
+    if (apiKey) { router.push('/dashboard') }
     else {
       if (isFetching) { setLoading(false) }
 

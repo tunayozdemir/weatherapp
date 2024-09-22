@@ -1,25 +1,27 @@
 'use client'
-import React, { useEffect, useState, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
-import { Weater, SelectBox, Background, Loading } from '../../components'
-import { Tabs, Button, notification } from 'antd'
-import axios from 'axios'
-import DefaultIcon from '../../utils/mapIcon'
-import { Clear, Clouds, Rain, Drizzle, Thunderstorm, Snow, Mist } from '@/app/assets/image'
-import ErrorBoundary from './error'
 
-type PositionType = 'left' | 'top'
+import axios from 'axios'
+import ErrorBoundary from './error'
+import DefaultIcon from '../../utils/mapIcon'
+import clsx from 'clsx'
+import { notification } from 'antd'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { configMessages } from '../../utils'
+import { Weater, SelectBox, Background, Loading } from '../../components'
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
+import { Clear, Clouds, Rain, Drizzle, Thunderstorm, Snow, Mist } from '@/app/assets/image'
+
 
 const Dashboard: React.FC = () => {
 
-  const router = useRouter();
+  const router = useRouter()
   const [apiData, setApiData] = useState<any>(null)
   const [apiKey, setApiKey] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null)
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null)
-  const [position, setPosition] = useState<PositionType>('top')
   const [selectionReset, setSelectionsReset] = useState<boolean>(false)
   const [backgroundImage, setBackgroundImage] = useState<string | any>()
 
@@ -42,7 +44,7 @@ const Dashboard: React.FC = () => {
         } catch (err: any) {
           notification.error({
             message: 'Hata',
-            description: `Veri alınamadı! Detail: ${err.message}`,
+            description: `${configMessages.notification_error_description_data_could_not_retrieved} Detail: ${err.message}`,
           });
         } finally {
           setLoading(false);
@@ -70,8 +72,8 @@ const Dashboard: React.FC = () => {
           setApiData(response.data);
         } catch (err: any) {
           notification.error({
-            message: 'Hata',
-            description: `Veri alınamadı! Detail: ${err.message}`,
+            message: configMessages.notification_error_message,
+            description: `${configMessages.notification_error_description_data_could_not_retrieved} ${<br>Detail: ${err.message}</br>} `,
           });
         } finally {
           setLoading(false);
@@ -116,33 +118,8 @@ const Dashboard: React.FC = () => {
     },
   ]
 
-  const handlePositionChange = () => {
-    setPosition((prevPosition) => (prevPosition === 'top' ? 'left' : 'top'));
-  }
-
-  const OperationsSlot: Record<PositionType, React.ReactNode> = {
-    left: (
-      <Button ghost onClick={handlePositionChange} className="tabs-extra-demo-button p-5 border-none pl-0 mb-2">
-        Menü Üst
-      </Button>
-    ),
-    top: (
-      <Button ghost onClick={handlePositionChange} className="tabs-extra-demo-button p-5 border-none pl-0 ">
-        Menü Yan
-      </Button>
-    ),
-  }
-
-  const slot = useMemo(() => {
-    return (
-      <div className="flex justify-start mr-2">
-        {OperationsSlot[position]}
-      </div>
-    );
-  }, [position])
-
   useEffect(() => {
-    
+
     document.title = "Weather | Dashboard"
 
     const storedApiKey = sessionStorage.getItem('apiKey');
@@ -165,17 +142,17 @@ const Dashboard: React.FC = () => {
           const { latitude, longitude } = position.coords;
           setLocation({ latitude, longitude });
         },
-        (error) => {
+        (err) => {
           notification.error({
-            message: 'Hata',
-            description: `Veri alınamadı! Detail: ${error.message}`,
+            message: configMessages.notification_error_message,
+            description: `${configMessages.invalid_Location_Could_Not_Obtained} ${<br>Detail: {err.message}</br>} `,
           });
-          setError(`Konum alınamadı, lütfen izin verin. Detail: ${error.message}`);
+          setError(`${configMessages.invalid_Location_Could_Not_Obtained} ${<br>Detail: {err.message}</br>} `);
           setLoading(false);
         }
       );
     } else {
-      setError('Geolocation is not supported by this browser.');
+      setError(configMessages.invalid_Borowser_Location_Not_Support);
       setLoading(false);
     }
 
@@ -215,9 +192,10 @@ const Dashboard: React.FC = () => {
     setLoading(false);
     setError(null);
     setSelectionsReset(true)
+    setBackgroundImage(null)
     setTimeout(() => {
       setSelectionsReset(false)
-    }, 50);
+    }, 50)
   }
 
   if (loading) {
@@ -236,14 +214,32 @@ const Dashboard: React.FC = () => {
           {backgroundImage && <Background src={backgroundImage} loading={loading} />}
           <div className="relative flex flex-col max-w-[900px] items-center w-full m-auto pt-4 text-white z-10 min-h-screen">
             <div className="p-4">
-              <Tabs
-                tabPosition={position}
-                tabBarExtraContent={{ left: slot }}
-                defaultActiveKey="1"
-                className="active:bg-transparent text-white"
-                items={tabItems}
-                onChange={handleTabChange}
-              />
+              <TabGroup as="div" className="active:bg-transparent text-white" onChange={handleTabChange}>
+                <TabList className="flex">
+                  <Tab className={({ selected }) =>
+                    clsx(
+                      'relative px-4 py-2 text-sm font-medium leading-5 text-white focus-visible:outline-none cursor-pointer',
+                      selected ? 'bg-blue-500 rounded-md' : 'cursor-pointer',
+                      'before:content-[""] before:absolute before:left-0 before:-bottom-4 before:h-[2px] before:bg-white before:w-0 hover:before:w-full before:transition-all before:duration-600'
+                    )
+                  }>
+                    {configMessages.title_tab_menu[0]}
+                  </Tab>
+                  <Tab className={({ selected }) =>
+                    clsx(
+                      'relative px-4 py-2 text-sm font-medium leading-5 text-white focus-visible:outline-none cursor-pointer',
+                      selected ? 'bg-blue-500 rounded-md' : 'cursor-pointer',
+                      'before:content-[""] before:absolute before:left-0 before:-bottom-4 before:h-[2px] before:bg-white before:w-0 hover:before:w-full before:transition-all before:duration-600'
+                    )
+                  }>
+                    {configMessages.title_tab_menu[1]}
+                  </Tab>
+                </TabList>
+                <TabPanels>
+                  <TabPanel>{tabItems[0].children}</TabPanel>
+                  <TabPanel>{tabItems[1].children}</TabPanel>
+                </TabPanels>
+              </TabGroup>
             </div>
             {apiData?.main && <Weater data={apiData} />}
           </div>
