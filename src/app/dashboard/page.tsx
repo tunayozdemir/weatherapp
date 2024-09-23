@@ -1,19 +1,19 @@
 'use client'
 
 import axios from 'axios'
-import mapIcon from '../../utils/mapIcon'
+import mapIcon from '../utils/mapIcon'
 import clsx from 'clsx'
 import { notification } from 'antd'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { configMessages } from '../../utils'
+import { configMessages } from '../utils'
 import { StaticImageData } from 'next/image'
-import { WeatherData } from '../../types/weather'
+import { WeatherData } from '../types/weather'
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
-import { Weater, SelectBox, Background, Loading, ErrorBoundary } from '../../components'
+import { Weater, SelectBox, Background, Loading, ErrorBoundary } from '../components'
 import { Clear, Clouds, Rain, Drizzle, Thunderstorm, Snow, Mist } from '@/app/assets/image'
-import { useGeolocation } from '../../hooks/useGeolocation'
+import { useGeolocation } from '../hooks/useGeolocation'
 
 const Dashboard: React.FC = () => {
 
@@ -119,63 +119,65 @@ const Dashboard: React.FC = () => {
   ]
 
   useEffect(() => {
-
-    // document.title = "Weather | Dashboard"
-
-    const storedApiKey = sessionStorage.getItem('apiKey')
-    notification.config({
-      placement: 'topRight',
-      bottom: 50,
-      duration: 5,
-    })
-
-    if (!storedApiKey) {
-      notification.error({
-        message: configMessages.notification_error_message,
-        description: `${configMessages.notification_error_description_data_could_not_retrieved} `,
+    if (typeof window !== 'undefined') {
+      document.title = "Weather | Dashboard"
+      const storedApiKey = sessionStorage.getItem('apiKey')
+      notification.config({
+        placement: 'topRight',
+        bottom: 50,
+        duration: 5,
       })
-      router.push('/')
-      return
-    }
-    else {
-      if (isFetching) {
-        setLoading(false)
-        router.push('/pages/dashboard')
+
+      if (!storedApiKey) {
+        notification.error({
+          message: configMessages.notification_error_message,
+          description: `${configMessages.notification_error_description_data_could_not_retrieved} `,
+        })
+        router.push('/')
+        return
+      }
+      else {
+        if (isFetching) {
+          setLoading(false)
+          router.push('/dashboard')
+        }
+      }
+
+      setApiKey(storedApiKey)
+
+      if (apiData) {
+        const weatherCondition = apiData.weather[0].main
+        switch (weatherCondition) {
+          case 'Clear':
+            setBackgroundImage(Clear)
+            break
+          case 'Clouds':
+            setBackgroundImage(Clouds)
+            break
+          case 'Rain':
+            setBackgroundImage(Rain)
+            break
+          case 'Drizzle':
+            setBackgroundImage(Drizzle)
+            break
+          case 'Thunderstorm':
+            setBackgroundImage(Thunderstorm)
+            break
+          case 'Snow':
+            setBackgroundImage(Snow)
+            break
+          case 'Mist':
+            setBackgroundImage(Mist)
+            break
+
+          default:
+            setBackgroundImage(null)
+        }
       }
     }
 
-    setApiKey(storedApiKey)
 
-    if (apiData) {
-      const weatherCondition = apiData.weather[0].main
-      switch (weatherCondition) {
-        case 'Clear':
-          setBackgroundImage(Clear)
-          break
-        case 'Clouds':
-          setBackgroundImage(Clouds)
-          break
-        case 'Rain':
-          setBackgroundImage(Rain)
-          break
-        case 'Drizzle':
-          setBackgroundImage(Drizzle)
-          break
-        case 'Thunderstorm':
-          setBackgroundImage(Thunderstorm)
-          break
-        case 'Snow':
-          setBackgroundImage(Snow)
-          break
-        case 'Mist':
-          setBackgroundImage(Mist)
-          break
-
-        default:
-          setBackgroundImage(null)
-      }
-    }
-  }, [])
+  }, [apiData, isFetching, router])
 
   const handleTabChange = () => {
     setApiData(null)

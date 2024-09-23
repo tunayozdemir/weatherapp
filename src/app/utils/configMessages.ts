@@ -1,4 +1,4 @@
-const ConfigMessages = {
+const configMessages = {
   text_oops: "Oops!",
   text_loading: "Yükleniyor...",
   text_submit: "Gönder",
@@ -14,10 +14,10 @@ const ConfigMessages = {
   invalid_ApiKey: "Lütfen geçerli bir api key giriniz.",
   invalid_Borowser_Location_Not_Support: "Tarayıcınız konum bilgilerini desteklemiyor.",
   invalid_Location_Could_Not_Obtained: "Konum alınamadı. Lütfen konum erişimine izin verin.",
-  title_apikey: 'API Key Giriniz',
-  notification_success: 'success',
-  notification_success_message: 'Başarılı',
-  notification_success_description: 'API Key başarıyla kaydedildi.',
+  title_apikey: "API Key Giriniz",
+  notification_success: "success",
+  notification_success_message: "Başarılı",
+  notification_success_description: "API Key başarıyla kaydedildi.",
   notification_error_description_data_could_not_retrieved: 'Veri alınamadı!',
   notification_error: 'error',
   notification_error_message: 'Hata',
@@ -38,4 +38,4 @@ const ConfigMessages = {
   title_tab_menu: ['Manüel Seçim', 'Harita Seçim']
 }
 
-export default ConfigMessages
+export default configMessages

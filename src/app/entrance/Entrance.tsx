@@ -2,14 +2,14 @@
 
 import axios from 'axios'
 import * as Form from '@radix-ui/react-form'
-import useApiKey from '../../hooks/useApiKey'
+import useApiKey from '../hooks/useApiKey'
 import React, { useState, useEffect } from 'react'
 import { notification } from 'antd'
-import { Loading } from '../../components'
+import { Loading } from '../components'
 import { useRouter } from 'next/navigation'
-import { configMessages } from '../../utils'
+import { configMessages } from '../utils'
 import { Button, Input } from '@headlessui/react'
-import { useGeolocation } from '../../hooks/useGeolocation'
+import { useGeolocation } from '../hooks/useGeolocation'
 
 const Entrance: React.FC = () => {
   const router = useRouter()
@@ -49,7 +49,7 @@ const Entrance: React.FC = () => {
           message: configMessages.notification_success_message,
           description: configMessages.notification_success_description,
         })
-        router.push('/pages/dashboard')
+        router.push('/dashboard')
       }
     } catch {
       router.push('/')
@@ -64,27 +64,29 @@ const Entrance: React.FC = () => {
   }
 
   useEffect(() => {
-
-    if (!apiKey) {
-      router.push('/')
-    }
-    else {
-      if (isFetching) {
-        setLoading(false)
+    if (typeof window !== 'undefined') {
+      if (!apiKey) {
+        router.push('/')
       }
+      else {
+        if (isFetching) {
+          setLoading(false)
+        }
 
-      if (error) {
-        setLoading(false)
-        notification.error({
-          message: configMessages.notification_error_message,
-          description: error,
-        })
+        if (error) {
+          setLoading(false)
+          notification.error({
+            message: configMessages.notification_error_message,
+            description: error,
+          })
+        }
       }
     }
-  }, [])
+
+  }, [apiKey, isFetching, error, router])
 
 
-  if ( loading) {
+  if (loading) {
     return <Loading />
   }
 
