@@ -1,7 +1,7 @@
 'use client'
 
 import axios from 'axios'
-import DefaultIcon from '../../utils/mapIcon'
+import mapIcon from '../../utils/mapIcon'
 import clsx from 'clsx'
 import { notification } from 'antd'
 import { useEffect, useState } from 'react'
@@ -13,6 +13,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import { Weater, SelectBox, Background, Loading, ErrorBoundary } from '../../components'
 import { Clear, Clouds, Rain, Drizzle, Thunderstorm, Snow, Mist } from '@/app/assets/image'
+import { useGeolocation } from '../../hooks/useGeolocation'
 
 const Dashboard: React.FC = () => {
 
@@ -20,10 +21,9 @@ const Dashboard: React.FC = () => {
   const [apiData, setApiData] = useState<WeatherData | null>(null);
   const [apiKey, setApiKey] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null)
   const [selectionReset, setSelectionsReset] = useState<boolean>(false)
   const [backgroundImage, setBackgroundImage] = useState<string | StaticImageData | null>(null);
+  const { location, isFetching, error } = useGeolocation()
 
   const handleChangeLocation = (value: { city: string; district?: string }) => {
     if (apiKey) {
@@ -109,7 +109,7 @@ const Dashboard: React.FC = () => {
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <MapClickHandler />
             {location && (
-              <Marker position={[location.latitude, location.longitude]} icon={DefaultIcon} />
+              <Marker position={[location.latitude, location.longitude]} icon={mapIcon} />
             )}
           </MapContainer>
 
@@ -120,7 +120,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
 
-    document.title = "Weather | Dashboard"
+    // document.title = "Weather | Dashboard"
 
     const storedApiKey = sessionStorage.getItem('apiKey')
     notification.config({
@@ -137,28 +137,14 @@ const Dashboard: React.FC = () => {
       router.push('/')
       return
     }
+    else {
+      if (isFetching) {
+        setLoading(false)
+        router.push('/pages/dashboard')
+      }
+    }
 
     setApiKey(storedApiKey)
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords
-          setLocation({ latitude, longitude })
-        },
-        () => {
-          notification.error({
-            message: configMessages.notification_error_message,
-            description: `${configMessages.invalid_Location_Could_Not_Obtained} `,
-          })
-          setError(`${configMessages.invalid_Location_Could_Not_Obtained}`)
-          setLoading(false)
-        }
-      )
-    } else {
-      setError(configMessages.invalid_Borowser_Location_Not_Support)
-      setLoading(false)
-    }
 
     if (apiData) {
       const weatherCondition = apiData.weather[0].main
@@ -189,12 +175,11 @@ const Dashboard: React.FC = () => {
           setBackgroundImage(null)
       }
     }
-  }, [router, apiData])
+  }, [])
 
   const handleTabChange = () => {
     setApiData(null)
     setLoading(false)
-    setError(null)
     setSelectionsReset(true)
     setBackgroundImage(null)
     setTimeout(() => {

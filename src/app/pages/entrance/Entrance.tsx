@@ -4,7 +4,6 @@ import axios from 'axios'
 import * as Form from '@radix-ui/react-form'
 import useApiKey from '../../hooks/useApiKey'
 import React, { useState, useEffect } from 'react'
-
 import { notification } from 'antd'
 import { Loading } from '../../components'
 import { useRouter } from 'next/navigation'
@@ -31,7 +30,7 @@ const Entrance: React.FC = () => {
         description: configMessages.invalid_Borowser_Location_Not_Support,
       })
       setLoading(false)
-      return
+      return;
     }
 
     try {
@@ -50,15 +49,15 @@ const Entrance: React.FC = () => {
           message: configMessages.notification_success_message,
           description: configMessages.notification_success_description,
         })
-        router.push('/dashboard')
+        router.push('/pages/dashboard')
       }
     } catch {
       router.push('/')
-      
       notification.error({
         message: configMessages.notification_error_message,
         description: configMessages.invalid_ApiKey,
       })
+      setLoading(false)
     } finally {
       setLoading(false)
     }
@@ -70,7 +69,9 @@ const Entrance: React.FC = () => {
       router.push('/')
     }
     else {
-      if (isFetching) { setLoading(false) }
+      if (isFetching) {
+        setLoading(false)
+      }
 
       if (error) {
         setLoading(false)
@@ -80,10 +81,10 @@ const Entrance: React.FC = () => {
         })
       }
     }
-  }, [apiKey, location, isFetching, error, router])
+  }, [])
 
 
-  if (isFetching || loading) {
+  if ( loading) {
     return <Loading />
   }
 

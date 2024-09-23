@@ -1,5 +1,5 @@
 "use client"
-import { Entrance } from './(pages)'
+import Entrance from './pages/entrance/Entrance'
 
 export default function Home() {
   return (

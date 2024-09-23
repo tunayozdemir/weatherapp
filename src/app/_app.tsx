@@ -2,11 +2,11 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import useApiKey from '../hooks/useApiKey'
+import useApiKey from './hooks/useApiKey'
 
 interface AppProps {
   Component: React.ComponentType;
-  pageProps: Record<string, unknown>; // Veya spesifik bir yapı tanımlayabilirsiniz
+  pageProps: Record<string, unknown>
 }
 
 
