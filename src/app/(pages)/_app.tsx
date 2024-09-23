@@ -1,20 +1,26 @@
-'use client'; // Bu satırı ekleyin
+'use client'
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import useApiKey from '../hooks/useApiKey';
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import useApiKey from '../hooks/useApiKey'
 
-function MyApp({ Component, pageProps }: any) {
+interface AppProps {
+  Component: React.ComponentType;
+  pageProps: Record<string, unknown>; // Veya spesifik bir yapı tanımlayabilirsiniz
+}
+
+
+function MyApp({ Component, pageProps }: AppProps) {
   const { apiKey } = useApiKey();
   const router = useRouter();
 
   useEffect(() => {
     if (!apiKey) {
-      router.push('/');
+      router.push('/')
     }
-  }, [apiKey, router]);
+  }, [apiKey, router])
 
-  return <Component {...pageProps} />;
+  return <Component {...pageProps} />
 }
 
 export default MyApp;

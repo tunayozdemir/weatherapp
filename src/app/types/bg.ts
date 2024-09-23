@@ -1,8 +1,8 @@
 import { StaticImageData } from 'next/image';
 
 export interface ImageComponentProps {
-  src: StaticImageData;
-  alt?: string | undefined | any;
+  src: StaticImageData | string;
+  alt?: string;
   className?: string;
   loading?: boolean
 }
