@@ -1,20 +1,18 @@
 'use client'
 
 import axios from 'axios'
-import ErrorBoundary from './error'
 import DefaultIcon from '../../utils/mapIcon'
 import clsx from 'clsx'
 import { notification } from 'antd'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { configMessages } from '../../utils'
-import { Weater, SelectBox, Background, Loading } from '../../components'
+import { StaticImageData } from 'next/image'
+import { WeatherData } from '../../types/weather'
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
+import { Weater, SelectBox, Background, Loading, ErrorBoundary } from '../../components'
 import { Clear, Clouds, Rain, Drizzle, Thunderstorm, Snow, Mist } from '@/app/assets/image'
-import { WeatherData } from '../../types/weather'
-import { StaticImageData } from 'next/image'
-
 
 const Dashboard: React.FC = () => {
 

@@ -12,7 +12,6 @@ import { configMessages } from '../../utils'
 import { Button, Input } from '@headlessui/react'
 import { useGeolocation } from '../../hooks/useGeolocation'
 
-
 const Entrance: React.FC = () => {
   const router = useRouter()
   const { apiKey, setApiKey } = useApiKey()
@@ -51,10 +50,11 @@ const Entrance: React.FC = () => {
           message: configMessages.notification_success_message,
           description: configMessages.notification_success_description,
         })
-        // router.push('/dashboard')
+        router.push('/dashboard')
       }
     } catch {
       router.push('/')
+      
       notification.error({
         message: configMessages.notification_error_message,
         description: configMessages.invalid_ApiKey,
@@ -66,14 +66,14 @@ const Entrance: React.FC = () => {
 
   useEffect(() => {
 
-    if (!apiKey) { 
-      router.push('/') 
+    if (!apiKey) {
+      router.push('/')
     }
     else {
       if (isFetching) { setLoading(false) }
 
       if (error) {
-        setLoading(true)
+        setLoading(false)
         notification.error({
           message: configMessages.notification_error_message,
           description: error,
@@ -83,7 +83,7 @@ const Entrance: React.FC = () => {
   }, [apiKey, location, isFetching, error, router])
 
 
-  if ( loading) {
+  if (isFetching || loading) {
     return <Loading />
   }
 
