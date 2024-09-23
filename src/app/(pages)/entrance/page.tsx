@@ -51,7 +51,7 @@ const Entrance: React.FC = () => {
           message: configMessages.notification_success_message,
           description: configMessages.notification_success_description,
         })
-        router.push('/dashboard')
+        // router.push('/dashboard')
       }
     } catch {
       router.push('/')
@@ -66,7 +66,9 @@ const Entrance: React.FC = () => {
 
   useEffect(() => {
 
-    if (apiKey) { router.push('/dashboard') }
+    if (!apiKey) { 
+      router.push('/') 
+    }
     else {
       if (isFetching) { setLoading(false) }
 
@@ -81,7 +83,7 @@ const Entrance: React.FC = () => {
   }, [apiKey, location, isFetching, error, router])
 
 
-  if (apiKey || isFetching || loading) {
+  if ( loading) {
     return <Loading />
   }
 
